@@ -3,6 +3,8 @@ A Web API Server configuration based hal+json media type formatter
 
 ## Sample API running at http://halwebapi.azurewebsites.net
 
+![](halwebapitest.gif)
+
 ## Create Hal type configurations 
 
 1. Create a class that implements HalTypeConfiguration<T>
