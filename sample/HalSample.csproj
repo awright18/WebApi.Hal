@@ -135,14 +135,17 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AuthorController.cs" />
+    <Compile Include="Controllers\BookController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="HalConfigurations\AuthorHalConfiguration.cs" />
+    <Compile Include="HalConfigurations\BookHalConfiguraton.cs" />
     <Compile Include="Models\Author.cs" />
     <Compile Include="Models\Book.cs" />
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\InMemoryAuthors.cs" />
+    <Compile Include="Models\InMemoryBooks.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -167,7 +170,7 @@
     <Folder Include="Views\Author\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="WebApi.Hal\WebApi.Hal.csproj">
+    <ProjectReference Include="..\source\WebApi.Hal\WebApi.Hal.csproj">
       <Project>{97497ee1-86b0-4327-bb22-bb58beb6a460}</Project>
       <Name>WebApi.Hal</Name>
     </ProjectReference>

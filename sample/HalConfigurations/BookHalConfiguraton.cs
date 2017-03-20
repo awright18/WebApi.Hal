@@ -3,13 +3,13 @@ using WebApi.Hal.MediaTypeFormatter;
 
 namespace HalSample.HalConfigurations
 {
-    public class AuthorHalConfiguration : HalTypeConfiguration<Author>
+    public class BookHalConfiguraton : HalTypeConfiguration<Book>
     {
-        public AuthorHalConfiguration() : base("/api/author")
+        public BookHalConfiguraton() : base("/api/book")
         {
         }
 
-        protected override void AddHalLinks(Author value)
+        protected override void AddHalLinks(Book value)
         {
             if (value == null)
                 return;

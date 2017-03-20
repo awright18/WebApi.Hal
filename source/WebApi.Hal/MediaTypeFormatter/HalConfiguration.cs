@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using System.Reflection;
 
 namespace WebApi.Hal.MediaTypeFormatter
 {
@@ -17,28 +19,38 @@ namespace WebApi.Hal.MediaTypeFormatter
         {
         }
 
-        protected abstract void AddLinks(T value);
+        protected abstract void AddHalLinks(T value);
 
         protected override void AddLinks(dynamic value)
         {
-            AddLinks(value);
+            AddHalLinks(value);
         }
     }
 
     public abstract class HalTypeConfiguration
     {
+        private List<Type> _resourceTypes;
+
         private List<HalLink> _links;
+
+        private List<object> _embeddedResources;
 
         protected HalTypeConfiguration(string resourceRoute)
         {
             ResourceRoute = resourceRoute;
             _links = new List<HalLink>();
+            _resourceTypes = new List<Type>();
         }
 
         public string ResourceRoute { get; }
 
         public IEnumerable<HalLink> Links {
             get { return _links; }
+        }
+
+        public void AddResourceType<T>()
+        {
+            _resourceTypes.Add(typeof(T));
         }
 
         public void AddLink(string linkName, string relativePath)
@@ -65,7 +77,7 @@ namespace WebApi.Hal.MediaTypeFormatter
 
         protected abstract void AddLinks(dynamic value);
 
-        public virtual dynamic CreateHalObject(dynamic value)
+        public virtual dynamic CreateHalObject(dynamic value,HalConfigurationCollection configs)
         {
             if (value == null)
                 return value;
@@ -74,24 +86,72 @@ namespace WebApi.Hal.MediaTypeFormatter
 
             AddLinks(value);
 
-            dynamic linksObject = new ExpandoObject();
-            var links = (IDictionary<string, object>) linksObject;
+            var linksObject = GetLinksHalObject(_links);
 
-            foreach (var link in Links) links.Add(link.Name, link.ToHalLinkObject());
+            var emeddedResources = GetEmbeddedResourcesObject(value, configs);
 
             dynamic halObject = new ExpandoObject();
             var hal = (IDictionary<string, object>) halObject;
 
             hal.Add("_links", linksObject);
 
-            foreach (var property in value.GetType().GetProperties())
+            var resourcesDictionary = (IDictionary<string, object>)emeddedResources;
+
+            if (resourcesDictionary.Keys.Count > 0)
             {
+                hal.Add("_embedded", emeddedResources);
+            }
+            
+            foreach (PropertyInfo property in value.GetType().GetProperties())
+            {
+                if (property.IsResourceType(configs))
+                {
+                    continue;
+                }
+
                 var name = property.Name;
-                var propertyValue = property.GetValue(value);
+                var propertyValue = property.GetValue(value);                
                 hal.Add(name, propertyValue);
             }
 
             return halObject;
+        }
+
+        public dynamic GetEmbeddedResourcesObject(dynamic value, HalConfigurationCollection configs)
+        {          
+            dynamic resourcessObject = new ExpandoObject();
+            var resourcesDictionary = (IDictionary<string, object>)resourcessObject;
+
+            foreach (PropertyInfo property in value.GetType().GetProperties())
+            {
+                if (!property.IsResourceType(configs))
+                {
+                    continue;
+                }
+
+                HalTypeConfiguration configuration;
+                configs.TryGetConfigurationFor(property.PropertyType, out configuration);
+
+                var resource = property.GetValue(value);
+
+                var halObject = configuration.CreateHalObject(resource, configs);
+
+                var name = property.Name.ToLower();
+
+                resourcesDictionary.Add(name, halObject);
+            }
+
+            return resourcessObject;
+
+        }
+
+        public dynamic GetLinksHalObject(IEnumerable<HalLink> links )
+        {
+            dynamic linksObject = new ExpandoObject();
+            var linksDictionary = (IDictionary<string, object>) linksObject;
+
+            foreach (var link in links) linksDictionary.Add(link.Name, link.ToHalLinkObject());
+            return linksObject;
         }
     }
 
@@ -140,6 +200,11 @@ namespace WebApi.Hal.MediaTypeFormatter
             if (links.FirstOrDefault(l => l.Name == link.Name) != null)
                 return true;
             return false;
+        }
+
+        public static bool IsResourceType(this PropertyInfo p, HalConfigurationCollection configs)
+        {
+            return configs.ContainsConfigurationFor(p.PropertyType);
         }
     }
 }

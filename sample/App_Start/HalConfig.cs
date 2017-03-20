@@ -10,7 +10,11 @@ namespace HalSample
         public static void Register(HttpConfiguration config)
         {
             config.AddHalMediaFormatter(
-                configs => { configs.AddConfiguration(typeof(Author), new AuthorHalConfiguration()); });
+                configs =>
+                {
+                    configs.AddConfiguration(typeof(Author), new AuthorHalConfiguration());
+                    configs.AddConfiguration(typeof(Book), new BookHalConfiguraton());
+                });
         }
     }
 }

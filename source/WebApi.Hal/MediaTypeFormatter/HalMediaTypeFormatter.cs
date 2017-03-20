@@ -41,7 +41,7 @@ namespace WebApi.Hal.MediaTypeFormatter
             HalTypeConfiguration configuration;
             _halConfigurations.TryGetConfigurationFor(type, out configuration);
 
-            var hal = configuration.CreateHalObject(value);
+            var hal = configuration.CreateHalObject(value,_halConfigurations);
 
             var json = JsonConvert.SerializeObject(hal);
 
