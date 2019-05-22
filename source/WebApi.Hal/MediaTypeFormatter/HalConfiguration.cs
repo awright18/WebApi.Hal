@@ -52,10 +52,15 @@ namespace WebApi.Hal.MediaTypeFormatter
         {
             _resourceTypes.Add(typeof(T));
         }
-
-        public void AddLink(string linkName, string relativePath)
+        
+        public void AddLink(string linkName, string relativePath, bool relativeToResource = true)
         {
-            var path = HalLink.CreateRelativeLink(ResourceRoute, relativePath);
+            var path = relativePath;
+
+            if (relativeToResource)
+            {
+               path = HalLink.CreateRelativeLink(ResourceRoute, relativePath);
+            }
 
             AddLink(new HalLink(linkName, path));
         }
@@ -130,9 +135,27 @@ namespace WebApi.Hal.MediaTypeFormatter
                 }
 
                 HalTypeConfiguration configuration;
+
                 configs.TryGetConfigurationFor(property.PropertyType, out configuration);
 
                 var resource = property.GetValue(value);
+          
+                if (resource is System.Collections.IEnumerable)
+                {
+                    var halObjects = new List<dynamic>();
+                    foreach (var prop in resource)
+                    {
+                        configs.TryGetConfigurationFor(prop.GetType(), out configuration);
+
+                       
+                        var halObj = configuration.CreateHalObject(prop, configs);
+
+                        halObjects.Add(halObj);
+                    }
+                   
+                    resourcesDictionary.Add(property.Name.ToLower(), halObjects);
+                    continue;
+                }
 
                 var halObject = configuration.CreateHalObject(resource, configs);
 
@@ -170,6 +193,7 @@ namespace WebApi.Hal.MediaTypeFormatter
 
         public bool IsTemplated { get; set; }
 
+ 
         public static string CreateRelativeLink(string basePath, string path)
         {
             return basePath + "/" + path;

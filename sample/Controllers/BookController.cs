@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Net;
+﻿using HalSample.Models;
 using System.Web.Http;
-using HalSample.Models;
 
 namespace HalSample.Controllers
 {
@@ -15,19 +13,19 @@ namespace HalSample.Controllers
         }
 
         // GET api/<controller>
-        public IEnumerable<string> Get()
-        {
-            return new[] { "value1", "value2" };
-        }
+     
 
         // GET api/<controller>/5
-        public Book Get(int id)
+        public IHttpActionResult Get(int id)
         {
             var book = _bookData.GetById(id);
 
             if (book == null)
-                throw new HttpResponseException(HttpStatusCode.NotFound);
-            return book;
+            {
+                return NotFound();
+            }
+
+            return Ok(book);
         }
 
         // POST api/<controller>

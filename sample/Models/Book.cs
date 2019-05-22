@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace HalSample.Models
 {
@@ -9,12 +10,20 @@ namespace HalSample.Models
             
         }
 
-        public Book(int id, string title, DateTime publishedDate, Author author)
+        public Book(
+            int id, 
+            string title, 
+            DateTime publishedDate, 
+            Author author,
+            Category category,
+            IEnumerable<Review> reviews)
         {
             Id = id;
             Title = title;
             PublishedDate = publishedDate;
             Author = author;
+            Category = category;
+            Reviews = reviews;
         }
 
         public Author Author { get; set; }
@@ -24,5 +33,9 @@ namespace HalSample.Models
         public string Title { get; set; }
 
         public DateTime PublishedDate { get; set; }
+
+        public Category Category { get; set; }
+
+        public IEnumerable<Review> Reviews { get; set; }
     }
 }

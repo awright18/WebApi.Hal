@@ -3,19 +3,21 @@ using WebApi.Hal.MediaTypeFormatter;
 
 namespace HalSample.HalConfigurations
 {
-    public class AuthorHalConfiguration : HalTypeConfiguration<Author>
+    public class CategoryHalConfiguration : HalTypeConfiguration<Category>
     {
-        public AuthorHalConfiguration() : base("/api/authors")
+        public CategoryHalConfiguration() : base("api/categories")
         {
+            
         }
 
-        protected override void AddHalLinks(Author value)
+        protected override void AddHalLinks(Category value)
         {
             if (value == null)
+            {
                 return;
+            }
 
             AddLink("self", value.Id.ToString());
-            AddLink("books", $"/books?authorid={value.Id.ToString()}",false);
             AddLinkTemplate("find", "{?id}");
         }
     }

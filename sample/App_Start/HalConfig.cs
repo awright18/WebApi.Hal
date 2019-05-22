@@ -1,6 +1,7 @@
-﻿using System.Web.Http;
+﻿using System.Collections.Generic;
 using HalSample.HalConfigurations;
 using HalSample.Models;
+using System.Web.Http;
 using WebApi.Hal.MediaTypeFormatter;
 
 namespace HalSample
@@ -14,6 +15,9 @@ namespace HalSample
                 {
                     configs.AddConfiguration(typeof(Author), new AuthorHalConfiguration());
                     configs.AddConfiguration(typeof(Book), new BookHalConfiguraton());
+                    configs.AddConfiguration(typeof(Category), new CategoryHalConfiguration());
+                    configs.AddConfiguration(typeof(Review), new ReviewHalConfiguration());
+                    configs.AddConfiguration(typeof(IEnumerable<Review>), new ReviewsHalConfiguration());
                 });
         }
     }

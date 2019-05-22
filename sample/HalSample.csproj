@@ -23,6 +23,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -141,11 +142,15 @@
     </Compile>
     <Compile Include="HalConfigurations\AuthorHalConfiguration.cs" />
     <Compile Include="HalConfigurations\BookHalConfiguraton.cs" />
+    <Compile Include="HalConfigurations\CategoryHalConfiguration.cs" />
+    <Compile Include="HalConfigurations\ReviewHalConfiguration.cs" />
     <Compile Include="Models\Author.cs" />
     <Compile Include="Models\Book.cs" />
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\InMemoryAuthors.cs" />
     <Compile Include="Models\InMemoryBooks.cs" />
+    <Compile Include="Models\InMemoryReviews.cs" />
+    <Compile Include="Models\Review.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
