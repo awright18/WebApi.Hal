@@ -82,10 +82,27 @@ namespace WebApi.Hal.MediaTypeFormatter
 
         protected abstract void AddLinks(dynamic value);
 
-        public virtual dynamic CreateHalObject(dynamic value,HalConfigurationCollection configs)
+        public virtual dynamic CreateHalObject(dynamic value,HalConfigurationCollection configs, HalTypeConfiguration halTypeConfiguration = null)
         {
             if (value == null)
                 return value;
+
+            dynamic halObject = new ExpandoObject();
+            var hal = (IDictionary<string, object>)halObject;
+
+            if (value is System.Collections.IEnumerable)
+            {
+                var halObjects = new List<dynamic>();
+                foreach (var index in value)
+                {
+                    HalTypeConfiguration configuration;
+                    configs.TryGetConfigurationFor(index.GetType(), out configuration);
+                    var halObj = configuration.CreateHalObject(index,configs);
+                    halObjects.Add(halObj);
+                }
+                             
+                return halObjects;
+            }
 
             _links = new List<HalLink>();
 
@@ -94,9 +111,6 @@ namespace WebApi.Hal.MediaTypeFormatter
             var linksObject = GetLinksHalObject(_links);
 
             var emeddedResources = GetEmbeddedResourcesObject(value, configs);
-
-            dynamic halObject = new ExpandoObject();
-            var hal = (IDictionary<string, object>) halObject;
 
             hal.Add("_links", linksObject);
 
@@ -146,7 +160,6 @@ namespace WebApi.Hal.MediaTypeFormatter
                     foreach (var prop in resource)
                     {
                         configs.TryGetConfigurationFor(prop.GetType(), out configuration);
-
                        
                         var halObj = configuration.CreateHalObject(prop, configs);
 
@@ -214,7 +227,7 @@ namespace WebApi.Hal.MediaTypeFormatter
                 href.Add("templated", true);
 
             return href;
-        }
+        }              
     }
 
     public static class HalLinksExtensions
@@ -231,4 +244,6 @@ namespace WebApi.Hal.MediaTypeFormatter
             return configs.ContainsConfigurationFor(p.PropertyType);
         }
     }
+
+    
 }

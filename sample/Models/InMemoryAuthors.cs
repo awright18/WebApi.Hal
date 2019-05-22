@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace HalSample.Models
 {
     public interface IAuthors
     {
         Author GetById(int id);
+        IEnumerable<Author> GetPage(PageInfo page);
     }
 
     public class InMemoryAuthors : IAuthors
@@ -26,6 +28,16 @@ namespace HalSample.Models
                 return author;
 
             return null;
+        }
+
+        public IEnumerable<Author> GetPage(PageInfo page)
+        {
+            if (page == null)
+            {
+                page = new PageInfo();
+            }
+            var result = _authors.Values.Skip(page.Offset).Take(page.Limit);
+            return result;
         }
 
         private void InitalizeAuthors()

@@ -5,19 +5,19 @@ using HalSample.Models;
 
 namespace HalSample.Controllers
 {
-    public class AuthorController : ApiController
+    public class AuthorsController : ApiController
     {
         private readonly IAuthors _authorsData;
 
-        public AuthorController()
+        public AuthorsController()
         {
             _authorsData = new InMemoryAuthors();
         }
 
-        // GET api/<controller>
-        public IEnumerable<string> Get()
+        [HttpGet]
+        public IEnumerable<Author> Get([FromUri] PageInfo page)
         {
-            return new[] {"value1", "value2"};
+            return _authorsData.GetPage(page);
         }
 
         // GET api/<controller>/5

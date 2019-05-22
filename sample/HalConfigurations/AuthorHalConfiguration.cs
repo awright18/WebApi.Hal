@@ -1,4 +1,5 @@
 ﻿using HalSample.Models;
+using System.Collections.Generic;
 using WebApi.Hal.MediaTypeFormatter;
 
 namespace HalSample.HalConfigurations
@@ -17,6 +18,18 @@ namespace HalSample.HalConfigurations
             AddLink("self", value.Id.ToString());
             AddLink("books", $"/books?authorid={value.Id.ToString()}",false);
             AddLinkTemplate("find", "{?id}");
+        }
+    }
+
+    public class AuthorsHalConfiguration : HalTypeConfiguration<IEnumerable<Author>>
+    {
+        public AuthorsHalConfiguration() : base("/api/authors")
+        {
+        }
+
+        protected override void AddHalLinks(IEnumerable<Author> value)
+        {
+           
         }
     }
 }

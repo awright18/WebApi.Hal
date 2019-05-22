@@ -3,11 +3,11 @@ using System.Web.Http;
 
 namespace HalSample.Controllers
 {
-    public class BookController : ApiController
+    public class BooksController : ApiController
     {
         private readonly IBooks _bookData;
 
-        public BookController()
+        public BooksController()
         {
             _bookData = new InMemoryBooks();
         }

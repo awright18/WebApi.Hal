@@ -18,6 +18,8 @@ namespace HalSample
                     configs.AddConfiguration(typeof(Category), new CategoryHalConfiguration());
                     configs.AddConfiguration(typeof(Review), new ReviewHalConfiguration());
                     configs.AddConfiguration(typeof(IEnumerable<Review>), new ReviewsHalConfiguration());
+                    configs.AddConfiguration(typeof(IEnumerable<Author>), new AuthorsHalConfiguration());
+
                 });
         }
     }
